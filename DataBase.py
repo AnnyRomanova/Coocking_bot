@@ -13,7 +13,7 @@ def create_db():
         description text,
         url text,
         ingredients text,
-        autor text
+        autor int
         )""")
 
 
@@ -43,3 +43,5 @@ def fill_the_table():
 create_db()
 # Заполняем БД
 fill_the_table()
+
+#todo дописать логи

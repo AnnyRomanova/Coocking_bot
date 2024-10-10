@@ -64,12 +64,17 @@ def del_recipe(message):
     recipe_name = message.text
     recipes_list = functions.select_data()
     user_id = message.from_user.id
+    flag = False
     for recipe in recipes_list:
         if recipe_name in recipe and user_id in recipe:
-            functions.del_user_recipe(recipe_name)
-            bot.send_message(message.chat.id, "Твой рецепт удален")
+            flag = True
         else:
-            bot.send_message(message.chat.id, "Я не могу удалить этот рецепт :(")
+            flag = False
+    if flag is False:
+        bot.send_message(message.chat.id, "Я не могу удалить этот рецепт :(")
+    else:
+        functions.del_user_recipe(recipe_name)
+        bot.send_message(message.chat.id, "Твой рецепт удален")
 
 
 

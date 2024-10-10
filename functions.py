@@ -21,6 +21,6 @@ def add_user_recipe(user_data):
 
 # метод удаляет рецепт юзера из бд
 def del_user_recipe(recipe_name):
-    query = """ DELETE FROM recipes1 WHERE "description" = recipe_name """
-    cursor.execute(query)
+    query = "DELETE FROM recipes1 WHERE description = ?"
+    cursor.execute(query, (recipe_name,))
     connection.commit()
