@@ -19,6 +19,14 @@ def add_user_recipe(user_data):
     connection.commit()
 
 
+# метод обновляет название рецепта
+def update_recipe_name(old_name, new_name):
+    query = " UPDATE recipes1 SET description = ? WHERE description = ? "
+    cursor.execute(query, (new_name, old_name))
+    connection.commit()
+
+
+
 # метод удаляет рецепт юзера из бд
 def del_user_recipe(recipe_name):
     query = "DELETE FROM recipes1 WHERE description = ?"
