@@ -81,6 +81,61 @@ def change_recipe_name(message, old_recipe_name):
     bot.send_message(message.chat.id, "Название изменено")
 
 
+# возможность юзера изменить ссылку на свой рецепт
+@bot.message_handler(commands=["change_recipe_url"])
+def start_change_recipe_url(message):
+    bot.send_message(message.chat.id, "В каком рецепте изменить ссылку? Введи название рецепта")
+    bot.register_next_step_handler(message, check_name_url)
+
+
+def check_name_url(message):
+    recipe_name = message.text
+    recipes_list = functions.select_data()
+    user_id = message.from_user.id
+    flag = False
+    for recipe in recipes_list:
+        if recipe_name in recipe and user_id in recipe:
+            flag = True
+    if flag is True:
+        bot.send_message(message.chat.id, "Ок, пришли новую ссылку")
+        bot.register_next_step_handler(message, change_recipe_url, recipe_name)
+    else:
+        bot.send_message(message.chat.id, "Этот рецепт изменить нельзя")
+
+
+def change_recipe_url(message, recipe_name):
+    new_recipe_url = message.text
+    functions.update_recipe_url(new_recipe_url, recipe_name)
+    bot.send_message(message.chat.id, "Ссылка изменена")
+
+
+# возможность юзера изменить ингредиент в своем рецепте
+@bot.message_handler(commands=["change_ingredient"])
+def start_change_ingredient(message):
+    bot.send_message(message.chat.id, "В каком рецепте изменить ингредиент? Введи название рецепта")
+    bot.register_next_step_handler(message, check_name_ingredient)
+
+
+def check_name_ingredient(message):
+    recipe_name = message.text
+    recipes_list = functions.select_data()
+    user_id = message.from_user.id
+    flag = False
+    for recipe in recipes_list:
+        if recipe_name in recipe and user_id in recipe:
+            flag = True
+    if flag is True:
+        bot.send_message(message.chat.id, "Ок, пришли новый ингредиент")
+        bot.register_next_step_handler(message, change_recipe_ingredient, recipe_name)
+    else:
+        bot.send_message(message.chat.id, "Этот рецепт изменить нельзя")
+
+
+def change_recipe_ingredient(message, recipe_name):
+    new_recipe_ingredient = message.text
+    functions.update_ingredient(new_recipe_ingredient, recipe_name)
+    bot.send_message(message.chat.id, "Ингредиент изменен")
+
 
 # возможность юзера удалить свой рецепт из бд
 @bot.message_handler(commands=["delete_recipe"])
@@ -104,8 +159,6 @@ def del_recipe(message):
     else:
         functions.del_user_recipe(recipe_name)
         bot.send_message(message.chat.id, "Твой рецепт удален")
-
-
 
 
 # Юзер отправляет ингредиент, в ответ список рецептов на кнопках

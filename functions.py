@@ -14,7 +14,7 @@ def select_data():
 
 # метод добавляет рецепт юзера в бд
 def add_user_recipe(user_data):
-    query = """ INSERT INTO recipes1 (description, url, ingredients, autor) VALUES(?,?,?,?); """
+    query = " INSERT INTO recipes1 (description, url, ingredients, autor) VALUES(?,?,?,?); "
     cursor.execute(query, user_data)
     connection.commit()
 
@@ -25,6 +25,19 @@ def update_recipe_name(old_name, new_name):
     cursor.execute(query, (new_name, old_name))
     connection.commit()
 
+
+# метод меняет ссылку на рецепт
+def update_recipe_url(new_url, recipe_name):
+    query = " UPDATE recipes1 SET url = ? WHERE description = ? "
+    cursor.execute(query, (new_url, recipe_name))
+    connection.commit()
+
+
+# метод меняет основной ингредиент в рецепте
+def update_ingredient(new_ingredient, recipe_name):
+    query = " UPDATE recipes1 SET ingredients = ? WHERE description = ? "
+    cursor.execute(query, (new_ingredient, recipe_name))
+    connection.commit()
 
 
 # метод удаляет рецепт юзера из бд
