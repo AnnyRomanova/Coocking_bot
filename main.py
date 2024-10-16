@@ -8,7 +8,7 @@ with sqlite3.connect('recipes1.sqlite', check_same_thread=False) as connection:
     cursor = connection.cursor()
 
 bot = telebot.TeleBot(
-    "7226047666:AAEqyEN6mz-FK2E8IOHR7wG2h1mOpDmsSsA")  # привязываем бота в телеге через ключ, который выдал BotFather
+    "")  # привязываем бота в телеге через ключ, который выдал BotFather
 
 
 # Декоратор, где прописываем функции для команд юзера через /
@@ -16,7 +16,22 @@ bot = telebot.TeleBot(
 def start(message):
     bot.send_message(message.chat.id, "Привет! Просто напиши ингредиент, "
                                       "который хочешь видеть в своем блюде, а я подскажу, "
-                                      "что вкусного с ним можно приготовить")
+                                      "что вкусного с ним можно приготовить."
+                                      "Можешь написать несколько ингредиентов через пробел")
+    bot.register_next_step_handler(message, list_of_recipes)
+
+
+# Юзер отправляет ингредиент, в ответ список рецептов на кнопках
+def list_of_recipes(message):
+    ingredients = message.text.lower().split()  # текст, который отправляет юзер (ингредиент)
+
+    markup = types.InlineKeyboardMarkup()
+    for recipe in functions.select_data():
+        for ingredient in ingredients:
+            if ingredient in recipe[3]:
+                markup.add(types.InlineKeyboardButton(recipe[1], url=recipe[2]))
+
+    bot.send_message(message.chat.id, "Выбери рецепт", reply_markup=markup)
 
 
 # возможность юзера добавить рецепт в бд
@@ -159,19 +174,6 @@ def del_recipe(message):
     else:
         functions.del_user_recipe(recipe_name)
         bot.send_message(message.chat.id, "Твой рецепт удален")
-
-
-# Юзер отправляет ингредиент, в ответ список рецептов на кнопках
-@bot.message_handler()
-def list_of_recipes(message):
-    ingredient = message.text.lower()  # текст, который отправляет юзер (ингредиент)
-
-    markup = types.InlineKeyboardMarkup()
-    for recipe in functions.select_data():
-        if ingredient in recipe[3]:
-            markup.add(types.InlineKeyboardButton(recipe[1], url=recipe[2]))
-
-    bot.send_message(message.chat.id, "Выбери рецепт", reply_markup=markup)
 
 
 bot.polling(non_stop=True)
