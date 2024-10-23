@@ -1,9 +1,17 @@
 import sqlite3  # база данных
 from parsing import egg_list, bread_list, sausage_list, sausage2_list, cheese_list
+from logging import getLogger, basicConfig, DEBUG  # для логирования
+
+# настраиваем логирование
+logger = getLogger()  # создание своего логера
+FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"  # формат вывода время-название файла-уровень-сообщение
+basicConfig(level=DEBUG, format=FORMAT)  # устанавливаем самый низкий уровень логирования, куда и в каком виде сохраняем логи
+
 
 # подключаемся к бд
 with sqlite3.connect('recipes1.sqlite') as connection:
     cursor = connection.cursor()
+logger.info("Подключение к базе данных")
 
 
 # Создаем таблицу с 5 полями
@@ -15,6 +23,7 @@ def create_db():
         ingredients text,
         autor int
         )""")
+    logger.info("База данных с полями создана")
 
 
 # Добавляем данные в таблицу
@@ -37,11 +46,11 @@ def fill_the_table():
     cursor.executemany(query, sausage2_list)
     cursor.executemany(query, cheese_list)
     connection.commit()  # обновляем бд
+    logger.info("Таблица в базе данных заполнена")
 
 
 # Создаем бд
 create_db()
+
 # Заполняем БД
 fill_the_table()
-
-#todo дописать логи
